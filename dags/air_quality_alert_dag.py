@@ -6,7 +6,7 @@ from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.providers.standard.operators.python import PythonOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from api.weather  import  fetch_data
+from api.ingest import  fetch_data
 from twitter.bot import tweet
 
 
@@ -21,7 +21,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='weather_alert_dag',
+    dag_id='air_quality_alert_dag',
     description='A DAG that alerts about when the air quality is bad',
     start_date=datetime(2026, 5, 2, 3),
     schedule='5 * * * *',  
@@ -48,7 +48,7 @@ with DAG(
 
 
     task4 = PythonOperator(
-        task_id ='twit',
+        task_id ='tweet',
         python_callable=tweet
     )
 
