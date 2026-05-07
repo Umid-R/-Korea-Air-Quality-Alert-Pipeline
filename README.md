@@ -6,29 +6,8 @@ An end-to-end automated data engineering pipeline that monitors real-time air qu
 
 ## 🏗️ Architecture
 
-```
-Korea Public Data Portal API (data.go.kr)
-              ↓
-     Python Ingestion Script
-              ↓
-    Bronze Layer (Raw Data)
-              ↓
-    Silver Layer (Cleaned Data)       ← Supabase SQL Function
-              ↓
-    Gold Layer (Business Logic)       ← Supabase SQL Function
-              ↓
-    ┌─────────────────────┐
-    │    Alert Check      │
-    │  khai_grade >= 3?   │
-    └──────┬──────────────┘
-           ↓              ↓
-    Twitter/X Bot      Stay Silent
-    Posts Alert
-           ↓
-    Tableau Dashboard (always updates)
+<img width="1280" height="1228" alt="image" src="https://github.com/user-attachments/assets/ad8783d8-dbff-43cb-8ad3-e99a2356fffa" />
 
-    ⟳ Repeats every hour via Apache Airflow
-```
 
 ---
 
