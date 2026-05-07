@@ -11,7 +11,7 @@ supabase = create_client(
 )
 
 
-def insert_weather(rows: list):
+def insert_bronze(rows: list):
     mapped = [{
         "station_name": row.get("stationName"),
         "sido_name":    row.get("sidoName"),
@@ -39,13 +39,11 @@ def insert_weather(rows: list):
     } for row in rows]
     
     response = supabase.table("bronze_air_quality").insert(mapped).execute()
-    if response.data:
-        supabase.rpc("load_silver").execute()
-        supabase.rpc("load_gold").execute()
+    
     return response.data
 
 
-def get_weather_for_twit():
+def get_weather_for_tweet():
     response = (
         supabase.table("gold_air_quality")
         .select("*")

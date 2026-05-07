@@ -2,7 +2,7 @@ import tweepy
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-from database.database import get_weather_for_twit
+from database.database import get_weather_for_tweet
 load_dotenv()
 
 # authenticate
@@ -16,8 +16,9 @@ client = tweepy.Client(
 
 def tweet():
     
-    data=get_weather_for_twit()
-    
+    data=get_weather_for_tweet()
+    number_of_tweets=len(data)
+    print(f"Number of tweets: {number_of_tweets}")
     for region in data:
         message = f"""🔴 Air Quality Alert — {region['sido_name']}!
 

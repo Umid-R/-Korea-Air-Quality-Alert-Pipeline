@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-from database.database import insert_weather
+from database.database import insert_bronze
 load_dotenv()
 
 API_KEY = os.getenv("WEATHER_API")
@@ -33,6 +33,6 @@ def fetch_data():
         except Exception as e:
             print(f"❌ {region} failed: {e}")
 
-    insert_weather(all_data)
+    insert_bronze(all_data)
     print(f"✅ Total {len(all_data)} rows inserted to bronze")
     return 0
