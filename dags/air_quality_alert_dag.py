@@ -47,9 +47,9 @@ with DAG(
     )
 
 
-    task4 = PythonOperator(
-        task_id ='tweet',
-        python_callable=tweet
-    )
+    # task4 = PythonOperator(
+    #     task_id ='tweet',
+    #     python_callable=tweet
+    # )
 
-    task1 >> task2>>task3>>task4
+    task1 >> task2>>task3 #>>task4

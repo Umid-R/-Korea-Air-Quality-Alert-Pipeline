@@ -47,6 +47,11 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 400M
 
   airflow-apiserver:
     <<: *airflow-common
@@ -64,6 +69,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 600M
 
   airflow-scheduler:
     <<: *airflow-common
@@ -79,6 +89,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 800M
 
   airflow-dag-processor:
     <<: *airflow-common
@@ -94,6 +109,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 400M
 
   airflow-triggerer:
     <<: *airflow-common
@@ -109,6 +129,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 400M
 
   airflow-init:
     <<: *airflow-common
