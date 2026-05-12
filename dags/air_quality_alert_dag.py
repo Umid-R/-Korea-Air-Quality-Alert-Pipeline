@@ -52,4 +52,4 @@ with DAG(
     #     python_callable=tweet
     # )
 
-    task1 >> task2>>task3 #>>task4
+    task1 >> task2>>task3#>>task4

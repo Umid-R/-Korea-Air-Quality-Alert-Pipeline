@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from database.database import insert_bronze
 load_dotenv()
+import time
 
 API_KEY = os.getenv("WEATHER_API")
 url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty'
@@ -32,7 +33,20 @@ def fetch_data():
             print(f"✅ {region} — {len(items)} stations fetched")
         except Exception as e:
             print(f"❌ {region} failed: {e}")
+        time.sleep(1)
 
     insert_bronze(all_data)
     print(f"✅ Total {len(all_data)} rows inserted to bronze")
     return 0
+
+
+params = {
+            'serviceKey': API_KEY,
+            'returnType': 'json',
+            'numOfRows': '100',
+            'pageNo': '1',
+            'sidoName': '세종',
+            'ver': '1.0'
+        }
+response = requests.get(url, params=params)
+print(response.text)
