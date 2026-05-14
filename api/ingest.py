@@ -40,13 +40,3 @@ def fetch_data():
     return 0
 
 
-params = {
-            'serviceKey': API_KEY,
-            'returnType': 'json',
-            'numOfRows': '100',
-            'pageNo': '1',
-            'sidoName': '세종',
-            'ver': '1.0'
-        }
-response = requests.get(url, params=params)
-print(response.text)
