@@ -1,3 +1,9 @@
+CREATE OR REPLACE FUNCTION load_silver()
+RETURNS void AS $$
+BEGIN
+
+TRUNCATE silver_air_quality;
+
 INSERT INTO silver_air_quality (
     station_name,
     sido_name,
@@ -20,20 +26,26 @@ INSERT INTO silver_air_quality (
 SELECT
     station_name,
     sido_name,
-    TO_TIMESTAMP(data_time, 'YYYY-MM-DD HH24:MI')   AS data_time,
-    NULLIF(pm10_value, '-')::FLOAT                   AS pm10_value,
-    NULLIF(pm25_value, '-')::FLOAT                   AS pm25_value,
-    NULLIF(o3_value,   '-')::FLOAT                   AS o3_value,
-    NULLIF(no2_value,  '-')::FLOAT                   AS no2_value,
-    NULLIF(co_value,   '-')::FLOAT                   AS co_value,
-    NULLIF(so2_value,  '-')::FLOAT                   AS so2_value,
-    NULLIF(khai_value, '-')::FLOAT                   AS khai_value,
-    NULLIF(khai_grade, '-')::INTEGER                 AS khai_grade,
-    NULLIF(pm10_grade, '-')::INTEGER                 AS pm10_grade,
-    NULLIF(pm25_grade, '-')::INTEGER                 AS pm25_grade,
-    NULLIF(o3_grade,   '-')::INTEGER                 AS o3_grade,
-    NULLIF(no2_grade,  '-')::INTEGER                 AS no2_grade,
-    NULLIF(co_grade,   '-')::INTEGER                 AS co_grade,
-    NULLIF(so2_grade,  '-')::INTEGER                 AS so2_grade
+    CASE
+        WHEN data_time LIKE '%24:00%'
+        THEN TO_TIMESTAMP(REPLACE(data_time, '24:00', '00:00'), 'YYYY-MM-DD HH24:MI') + INTERVAL '1 day'
+        ELSE TO_TIMESTAMP(data_time, 'YYYY-MM-DD HH24:MI')
+    END,
+    NULLIF(pm10_value, '-')::FLOAT,
+    NULLIF(pm25_value, '-')::FLOAT,
+    NULLIF(o3_value,   '-')::FLOAT,
+    NULLIF(no2_value,  '-')::FLOAT,
+    NULLIF(co_value,   '-')::FLOAT,
+    NULLIF(so2_value,  '-')::FLOAT,
+    NULLIF(khai_value, '-')::FLOAT,
+    NULLIF(khai_grade, '-')::INTEGER,
+    NULLIF(pm10_grade, '-')::INTEGER,
+    NULLIF(pm25_grade, '-')::INTEGER,
+    NULLIF(o3_grade,   '-')::INTEGER,
+    NULLIF(no2_grade,  '-')::INTEGER,
+    NULLIF(co_grade,   '-')::INTEGER,
+    NULLIF(so2_grade,  '-')::INTEGER
 FROM bronze_air_quality;
 
+END;
+$$ LANGUAGE plpgsql;
