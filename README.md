@@ -6,7 +6,8 @@ An end-to-end automated data engineering pipeline that monitors real-time air qu
 
 ## 🏗️ Architecture
 
-<img width="1280" height="1228" alt="image" src="https://github.com/user-attachments/assets/ad8783d8-dbff-43cb-8ad3-e99a2356fffa" />
+<img width="976" height="823" alt="image" src="https://github.com/user-attachments/assets/0958406c-98db-4fba-9e2d-a3d38d390fc1" />
+
 
 
 ---
@@ -21,7 +22,7 @@ An end-to-end automated data engineering pipeline that monitors real-time air qu
 | Transformation | SQL (Supabase stored functions) |
 | Orchestration | Apache Airflow 3 (Docker) |
 | Alerting | Twitter/X Bot (tweepy) |
-| Visualization | Tableau Public |
+| Visualization | Data Studio (Google) |
 
 ---
 
@@ -86,7 +87,7 @@ air_quality_pipeline/
 The pipeline runs every hour with 4 sequential tasks:
 
 ```
-fetch_insert_data → load_silver → load_gold → send_alerts
+fetch_insert_data → load_silver → load_gold → tweet
 ```
 
 | Task | Operator | Description |
@@ -94,7 +95,7 @@ fetch_insert_data → load_silver → load_gold → send_alerts
 | `fetch_insert_data` | PythonOperator | Calls AirKorea API for all 17 regions, bulk inserts ~638 stations to bronze |
 | `load_silver` | SQLExecuteQueryOperator | Runs `load_silver()` Supabase function |
 | `load_gold` | SQLExecuteQueryOperator | Runs `load_gold()` Supabase function |
-| `send_alerts` | PythonOperator | Queries gold table, tweets where `should_tweet = true` |
+| `tweet` | PythonOperator | Queries gold table, tweets where `should_tweet = true` |
 
 ---
 
@@ -157,14 +158,26 @@ Go to `http://localhost:8080` → toggle `weather_alert_dag` on → it runs auto
 
 ---
 
-## 📈 Tableau Dashboard
+## 📈 Looker Studio Dashboard
 
-Live dashboard showing air quality trends across all 17 Korean regions:
-- Line graphs of PM2.5 and PM10 over time
-- Regional comparison charts
-- Historical trend analysis
+Interactive dashboard showing air quality trends across all 17 Korean regions using Google Looker Studio:
 
-🔗 [View Dashboard](#) ← Add your Tableau Public link here
+### Daily Report
+- Current AQI comparison across all 17 regions
+- Regional AQI ranking bar chart
+- Detailed table including:
+  - AQI score (KHAI)
+  - PM2.5 values
+  - PM10 values
+  - Air quality grade
+  - Worst monitoring station per region
+
+### Historical Report
+- Historical AQI trend analysis over a selected time period
+- Region-based filtering for customized analysis
+- Interactive line charts for air quality changes over time
+
+https://datastudio.google.com/reporting/d5d4fe31-29f5-4655-9d02-14dae1d4fa68
 
 ---
 
