@@ -89,6 +89,7 @@ The pipeline runs every hour with 4 sequential tasks:
 ```
 fetch_insert_data → load_silver → load_gold → tweet
 ```
+<img width="1512" height="761" alt="image" src="https://github.com/user-attachments/assets/719bbe7b-4d17-40b8-a8bc-b4794426a083" />
 
 | Task | Operator | Description |
 |---|---|---|
