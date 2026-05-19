@@ -20,18 +20,18 @@ def tweet():
     number_of_tweets=len(data)
     print(f"Number of tweets: {number_of_tweets}")
     for region in data:
-        message = f"""🔴 Air Quality Alert — {region['sido_name']}!
+        message = f"""🔴 대기질 경보 — {region['sido_name']}!
 
-Worst area: {region['worst_station']}
-AQI Score: {region['khai_value']}
-Grade: {region['grade_label']} 😷
-Time: {datetime.fromisoformat(region['data_time']).strftime("%H:%M")}
+최악 지역: {region['worst_station']}
+통합대기환경지수: {region['khai_value']}
+등급: {region['grade_label']} 😷
+측정 시간: {datetime.fromisoformat(region['data_time']).strftime("%H:%M")}
 
 PM2.5: {region['pm25_value']} μg/m³
 PM10: {region['pm10_value']} μg/m³
 
-Stay indoors and wear a mask!
-#Korea #AirQuality #미세먼지"""
+실내에 머무르고 마스크를 착용하세요!
+#미세먼지 #대기질 #Korea #AirQuality"""
 
         client.create_tweet(text=message)
         
