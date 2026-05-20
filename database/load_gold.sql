@@ -1,3 +1,9 @@
+CREATE OR REPLACE FUNCTION load_gold()
+RETURNS void AS $$
+BEGIN
+
+TRUNCATE gold_air_quality;
+
 INSERT INTO gold_air_quality (
     sido_name,
     worst_station,
@@ -11,7 +17,7 @@ INSERT INTO gold_air_quality (
 )
 SELECT DISTINCT ON (s.sido_name)
     s.sido_name,
-    s.station_name                          AS worst_station,
+    s.station_name,
     s.khai_value,
     s.khai_grade,
     CASE
@@ -20,14 +26,14 @@ SELECT DISTINCT ON (s.sido_name)
         WHEN s.khai_grade = 3 THEN 'Bad'
         WHEN s.khai_grade = 4 THEN 'Very Bad'
         ELSE 'Unknown'
-    END                                     AS grade_label,
+    END,
     s.pm25_value,
     s.pm10_value,
-    CASE
-        WHEN s.khai_grade >= 3 THEN true
-        ELSE false
-    END                                     AS should_tweet,
+    (s.khai_grade >= 3),
     s.data_time
 FROM silver_air_quality s
 WHERE s.khai_value IS NOT NULL
 ORDER BY s.sido_name, s.khai_value DESC;
+
+END;
+$$ LANGUAGE plpgsql;

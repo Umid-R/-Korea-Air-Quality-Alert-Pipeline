@@ -1,3 +1,4 @@
+
 CREATE OR REPLACE FUNCTION load_silver()
 RETURNS void AS $$
 BEGIN
