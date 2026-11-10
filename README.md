@@ -51,6 +51,8 @@ This is the **medallion architecture**: raw data is kept as-is in bronze, cleane
 
 Bronze stores every column as text. Silver converts them to proper types (float, int, timestamp). Gold is small and ready for the dashboard and the bot.
 
+A fourth table, `tweet_log`, stores which alerts were already posted (see problem 7).
+
 Silver and gold are rebuilt by two SQL functions, `load_silver()` and `load_gold()`, run by Airflow right after ingestion.
 
 ---
@@ -93,6 +95,9 @@ Running Airflow in Docker (scheduler, API server, DAG processor, database) somet
 **6. Messy API values.**
 Missing readings arrive as `'-'`. Bronze stores everything as text so nothing is lost; silver converts them to NULL, and gold ignores rows with no AQI.
 
+**7. The bot repeated the same alert every hour.**
+The first version tweeted every region marked "Bad" on every run, so one region that stayed bad would be tweeted 24 times a day. I added a small `tweet_log` table. Before tweeting, the bot checks it and only sends an alert if the region has no alert in the last 24 hours, or if its grade got worse (for example Bad → Very Bad). Each alert is logged right after it is posted, so an Airflow retry cannot post it twice. The rule is a small function (`should_send_alert`) that I tested with four cases (new region, same grade, worse grade, cooldown over).
+
 ---
 
 ## 🛠️ Tech stack
@@ -134,6 +139,7 @@ Missing readings arrive as `'-'`. Bronze stores everything as text so nothing is
 │   ├── init_bronze_layer.sql      # Bronze table
 │   ├── init_silver_layer.sql      # Silver table
 │   ├── init_gold_layer.sql        # Gold table
+│   ├── init_tweet_log.sql         # Table that remembers sent alerts
 │   ├── load_silver.sql            # load_silver() function
 │   └── load_gold.sql              # load_gold() function
 ├── twitter/
@@ -165,7 +171,7 @@ Fill in your keys in `.env` (never commit this file).
 
 ### 3. Create the Supabase tables
 In the Supabase SQL editor, run in this order:
-`init_bronze_layer.sql`, `init_silver_layer.sql`, `init_gold_layer.sql`, `load_silver.sql`, `load_gold.sql` (all in `database/`).
+`init_bronze_layer.sql`, `init_silver_layer.sql`, `init_gold_layer.sql`, `init_tweet_log.sql`, `load_silver.sql`, `load_gold.sql` (all in `database/`).
 
 ### 4. Start Airflow
 ```bash
@@ -201,7 +207,7 @@ Live report: https://datastudio.google.com/reporting/d5d4fe31-29f5-4655-9d02-14d
 
 ## 📬 X alert bot
 
-The bot posts when a region reaches grade 3 (Bad) or 4 (Very Bad). Messages are written in Korean.
+The bot posts when a region reaches grade 3 (Bad) or 4 (Very Bad). It does not repeat itself: a region is tweeted again only after 24 hours, or sooner if its grade gets worse. Messages are written in Korean.
 
 ```
 🔴 Air Quality Alert — 경기!
@@ -222,8 +228,8 @@ Stay indoors and wear a mask!
 
 ## Next steps
 
-- Avoid repeated alerts: only tweet when a region's grade changes (or once per day per region).
-- Deploy on a small always-on server.
+- Deploy on a small always-on server with enough RAM (a larger instance, or add swap).
+- Add a short test suite and a GitHub Actions check.
 
 ---
 

@@ -2,7 +2,7 @@ import tweepy
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-from database.database import get_weather_for_tweet
+from database.database import get_weather_for_tweet, log_tweet
 load_dotenv()
 
 # authenticate
@@ -18,7 +18,7 @@ def tweet():
     
     data=get_weather_for_tweet()
     number_of_tweets=len(data)
-    print(f"Number of tweets: {number_of_tweets}")
+    print(f"Number of new alerts to tweet: {number_of_tweets}")
     for region in data:
         message = f"""🔴 대기질 경보 — {region['sido_name']}!
 
@@ -34,4 +34,6 @@ PM10: {region['pm10_value']} μg/m³
 #미세먼지 #대기질 #Korea #AirQuality"""
 
         client.create_tweet(text=message)
-        
+        # remember it, so the same region is not tweeted again every hour
+        log_tweet(region)
+
