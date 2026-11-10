@@ -15,25 +15,34 @@ INSERT INTO gold_air_quality (
     should_tweet,
     data_time
 )
-SELECT DISTINCT ON (s.sido_name)
-    s.sido_name,
-    s.station_name,
-    s.khai_value,
-    s.khai_grade,
-    CASE
-        WHEN s.khai_grade = 1 THEN 'Good'
-        WHEN s.khai_grade = 2 THEN 'Moderate'
-        WHEN s.khai_grade = 3 THEN 'Bad'
-        WHEN s.khai_grade = 4 THEN 'Very Bad'
+WITH latest AS (
+    SELECT DISTINCT ON (station_name, sido_name) *
+    FROM silver_air_quality
+    WHERE khai_value IS NOT NULL
+    ORDER BY station_name, sido_name, data_time DESC
+),
+recent AS (
+    SELECT * FROM latest
+    WHERE data_time >= (SELECT MAX(data_time) FROM latest) - INTERVAL '3 hours'
+)
+SELECT DISTINCT ON (sido_name)
+    sido_name,
+    station_name,
+    khai_value,
+    khai_grade,
+    CASE khai_grade
+        WHEN 1 THEN 'Good'
+        WHEN 2 THEN 'Moderate'
+        WHEN 3 THEN 'Bad'
+        WHEN 4 THEN 'Very Bad'
         ELSE 'Unknown'
     END,
-    s.pm25_value,
-    s.pm10_value,
-    (s.khai_grade >= 3),
-    s.data_time
-FROM silver_air_quality s
-WHERE s.khai_value IS NOT NULL
-ORDER BY s.sido_name, s.khai_value DESC;
+    pm25_value,
+    pm10_value,
+    (khai_grade >= 3),
+    data_time
+FROM recent
+ORDER BY sido_name, khai_value DESC;
 
 END;
 $$ LANGUAGE plpgsql;

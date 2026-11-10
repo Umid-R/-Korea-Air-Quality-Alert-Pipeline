@@ -1,4 +1,3 @@
-
 CREATE OR REPLACE FUNCTION load_silver()
 RETURNS void AS $$
 BEGIN
@@ -46,7 +45,11 @@ SELECT
     NULLIF(no2_grade,  '-')::INTEGER,
     NULLIF(co_grade,   '-')::INTEGER,
     NULLIF(so2_grade,  '-')::INTEGER
-FROM bronze_air_quality;
+FROM (
+    SELECT DISTINCT ON (station_name, sido_name, data_time) *
+    FROM bronze_air_quality
+    ORDER BY station_name, sido_name, data_time, id DESC
+) b;
 
 END;
 $$ LANGUAGE plpgsql;
