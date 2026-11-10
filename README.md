@@ -25,9 +25,9 @@ An automated data pipeline that pulls real-time air quality for all 17 regions o
 
 - Runs unattended every hour: **4 tasks, ~638 rows ingested per run, 85,000+ raw rows collected** so far.
 - Dashboard shows all 17 regions (current AQI, PM2.5, PM10, grade, worst station).
-- Alerts post automatically on X. Example from the first version (20 May 2026):
+- Alerts post automatically on X. Example posted by the pipeline on 10 Nov 2026 (Busan, AQI 102, "Bad"):
 
-<img src="images/x-alert.png" width="420" alt="X alert example">
+<img src="images/x-alert.png" width="420" alt="X alert posted by the pipeline">
 
 ---
 
@@ -62,7 +62,7 @@ Runs every hour:
 ```
 fetch_insert_data → load_silver → load_gold → tweet
 ```
-<img width="1512" height="761" alt="image" src="https://github.com/user-attachments/assets/719bbe7b-4d17-40b8-a8bc-b4794426a083" />
+<img src="images/airflow-graph.png" alt="Airflow DAG run: all 4 tasks succeeded">
 
 | Task | Operator | Description |
 |---|---|---|
@@ -201,7 +201,7 @@ Live report: https://datastudio.google.com/reporting/d5d4fe31-29f5-4655-9d02-14d
 
 ## 📬 X alert bot
 
-The bot posts when a region reaches grade 3 (Bad) or 4 (Very Bad). Messages are written in Korean; the example above is shown translated.
+The bot posts when a region reaches grade 3 (Bad) or 4 (Very Bad). Messages are written in Korean.
 
 ```
 🔴 Air Quality Alert — 경기!
